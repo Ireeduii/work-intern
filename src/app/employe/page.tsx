@@ -1,4 +1,4 @@
-import SkillProfilePage from "./components/employee/skill-profile-view";
+import SkillProfilePage from "../components/employee/skill-profile-view";
 
 export default function Home() {
   return (

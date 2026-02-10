@@ -1,13 +1,13 @@
 "use client";
 
 import { useSkills } from "@/app/hooks/use-skill";
-import { EmployeeHeader } from "../components/employee-header";
-import { SkillsTable } from "../components/skill-table";
-import { SkillModal } from "../components/skill-modal";
-import { SkillStats } from "../components/skill-stats";
+import { EmployeeHeader } from "./employee-header";
+import { SkillModal } from "./skill-modal";
 import { Button } from "@/components/ui/button";
 import { Plus, LayoutGrid } from "lucide-react";
-import type { Skill } from "../types/skill";
+import type { Skill } from "../../types/skill";
+import { SkillStats } from "./skill-stats";
+import { SkillsTable } from "./skill-table";
 
 const initialSkills: Skill[] = [
   {

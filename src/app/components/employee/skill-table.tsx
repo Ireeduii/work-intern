@@ -10,10 +10,9 @@ import {
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { SkillLevel } from "./skill-level";
 import { Pencil, Trash2 } from "lucide-react";
-import type { Skill } from "../types/skill";
-
+import { SkillLevel } from "./skill-level";
+import type { Skill } from "@/app/types/skill";
 interface SkillsTableProps {
   skills: Skill[];
   onEdit: (skill: Skill) => void;
