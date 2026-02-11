@@ -1,0 +1,7 @@
+name = "work-intern"
+pages_build_output_dir = ".next"
+
+[[d1_databases]]
+binding = "DB" 
+database_name = "skill-map-db"
+database_id = "b145fb55-b648-43b1-addd-340641c8045c"
