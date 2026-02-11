@@ -79,27 +79,9 @@ export function useSkills(initialSkills: any[]) {
     fetchSkills();
   }, []);
 
-  // const onSave = async (skillData: any) => {
-  //   try {
-  //     const response = await fetch("/api/skills", {
-  //       method: "POST",
-  //       headers: { "Content-Type": "application/json" },
-  //       body: JSON.stringify(skillData),
-  //     });
-
-  //     if (response.ok) {
-  //       toast.success("Амжилттай хадгалагдлаа");
-  //       fetchSkills();
-  //       setIsModalOpen(false);
-  //     } else {
-  //       toast.error("Хадгалахад алдаа гарлаа");
-  //     }
-  //   } catch (error) {
-  //     toast.error("Сервертэй холбогдож чадсангүй");
-  //   }
-  // };
-
   const onSave = async (skillData: any) => {
+    console.log("Хүсэлт явуулж буй төрөл: POST");
+
     try {
       const response = await fetch("/api/skills", {
         method: "POST",
@@ -107,19 +89,28 @@ export function useSkills(initialSkills: any[]) {
         body: JSON.stringify(skillData),
       });
 
-      if (!response.ok) {
-        const errorData = await response.json();
-        console.error("Серверийн алдаа:", errorData);
-        throw new Error("Алдаа гарлаа");
+      if (response.status === 405) {
+        toast.error(
+          "API Method зөвшөөрөгдөөгүй байна (405). /api/skills/route.ts-ээ шалгана уу.",
+        );
+        return;
       }
 
+      if (!response.ok) {
+        const errorText = await response.text();
+        throw new Error(errorText || "Алдаа гарлаа");
+      }
+
+      // 1. Амжилттай болсон бол
       toast.success("Амжилттай хадгалагдлаа");
+
+      // 2. Жагсаалтыг шинэчилж, модалыг хаах
       await fetchSkills();
       setIsModalOpen(false);
-    } catch (error) {
-      console.error("Fetch алдаа:", error);
-      toast.error("Сервертэй холбогдож чадсангүй");
-    }
+    } catch (err: any) {
+      console.error("DEBUG:", err);
+      toast.error(err.message || "Холболтын алдаа гарлаа");
+    } // <--- Энэ хаалт болон catch блокийг гүйцээлээ
   };
   const openAdd = () => {
     setEditingSkill(null);
