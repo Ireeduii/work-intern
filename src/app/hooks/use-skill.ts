@@ -101,16 +101,14 @@ export function useSkills(initialSkills: any[]) {
         throw new Error(errorText || "Алдаа гарлаа");
       }
 
-      // 1. Амжилттай болсон бол
       toast.success("Амжилттай хадгалагдлаа");
 
-      // 2. Жагсаалтыг шинэчилж, модалыг хаах
       await fetchSkills();
       setIsModalOpen(false);
     } catch (err: any) {
       console.error("DEBUG:", err);
       toast.error(err.message || "Холболтын алдаа гарлаа");
-    } // <--- Энэ хаалт болон catch блокийг гүйцээлээ
+    }
   };
   const openAdd = () => {
     setEditingSkill(null);
