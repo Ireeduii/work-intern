@@ -1,46 +1,84 @@
-import { NextRequest, NextResponse } from "next/server";
+import { createSchema, createYoga } from "graphql-yoga";
+import { NextRequest } from "next/server";
+import { getRequestContext } from "@cloudflare/next-on-pages";
 
 export const runtime = "edge";
 
-export async function GET(req: NextRequest) {
-  try {
-    // @ts-ignore
-    const db = req.context?.env?.DB || process.env.DB;
-
-    if (!db)
-      return NextResponse.json({ error: "DB not found" }, { status: 500 });
-
-    const { results } = await db.prepare("SELECT * FROM skills").all();
-    return NextResponse.json({ skills: results });
-  } catch (error: any) {
-    return NextResponse.json({ error: error.message }, { status: 500 });
-  }
+// type
+interface Env {
+  DB: D1Database;
 }
 
-export async function POST(req: NextRequest) {
-  try {
-    const body = await req.json();
-    const { name, category, level } = body;
+interface YogaContext {
+  db: D1Database;
+}
 
-    // @ts-ignore
-    const db = req.context?.env?.DB || process.env.DB;
-
-    if (!db) {
-      return NextResponse.json(
-        { error: "DB connection fail" },
-        { status: 500 },
-      );
+const schema = createSchema<YogaContext>({
+  typeDefs: `
+    type Skill {
+      id: Int
+      name: String
+      category: String
+      level: String
     }
 
-    await db
-      .prepare(
-        "INSERT INTO skills (name, category, level, lastUpdated) VALUES (?, ?, ?, ?)",
-      )
-      .bind(name, category, level, new Date().toLocaleDateString())
-      .run();
+    type Query {
+      skills: [Skill]
+    }
 
-    return NextResponse.json({ success: true });
-  } catch (error: any) {
-    return NextResponse.json({ error: error.message }, { status: 500 });
+    type Mutation {
+      addSkill(name: String!, category: String!, level: String!): Skill
+    }
+  `,
+  resolvers: {
+    Query: {
+      skills: async (_, __, context) => {
+        const { results } = await context.db
+          .prepare("SELECT * FROM skills")
+          .all();
+        return results as any;
+      },
+    },
+    Mutation: {
+      addSkill: async (_, { name, category, level }, context) => {
+        const result = await context.db
+          .prepare(
+            "INSERT INTO skills (name, category, level, lastUpdated) VALUES (?, ?, ?, ?) RETURNING *",
+          )
+          .bind(name, category, level, new Date().toLocaleDateString())
+          .first();
+
+        return result as any;
+      },
+    },
+  },
+});
+
+const yoga = createYoga<YogaContext>({
+  schema,
+  graphqlEndpoint: "/api/skills",
+  fetchAPI: { Response, Request },
+});
+
+export async function GET(request: NextRequest) {
+  const { env } = getRequestContext<Env>();
+
+  return yoga.handleRequest(request, {
+    db: env.DB,
+  });
+}
+
+export async function POST(request: NextRequest) {
+  const { env } = getRequestContext<Env>();
+
+  if (!env || !env.DB) {
+    return new Response(JSON.stringify({ error: "D1 Binding missing" }), {
+      status: 500,
+      headers: { "Content-Type": "application/json" },
+    });
   }
+
+  return yoga.handleRequest(request, {
+    db: env.DB,
+  });
 }

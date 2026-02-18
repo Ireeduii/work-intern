@@ -1,115 +1,44 @@
-// import { useState } from "react";
-// import type { Skill } from "@/app/types/skill";
-
-// export function useSkills(initialSkills: Skill[]) {
-//   const [skills, setSkills] = useState<Skill[]>(initialSkills);
-//   const [isModalOpen, setIsModalOpen] = useState(false);
-//   const [editingSkill, setEditingSkill] = useState<Skill | null>(null);
-
-//   const onSave = (skillData: Omit<Skill, "id" | "lastUpdated">) => {
-//     const updatedDate = new Date().toLocaleDateString("en-US", {
-//       month: "short",
-//       day: "numeric",
-//       year: "numeric",
-//     });
-
-//     if (editingSkill) {
-//       setSkills((prev) =>
-//         prev.map((s) =>
-//           s.id === editingSkill.id
-//             ? { ...s, ...skillData, lastUpdated: updatedDate }
-//             : s,
-//         ),
-//       );
-//     } else {
-//       const newSkill: Skill = {
-//         ...skillData,
-//         id: Date.now().toString(),
-//         lastUpdated: updatedDate,
-//       };
-//       setSkills((prev) => [...prev, newSkill]);
-//     }
-//     setIsModalOpen(false);
-//   };
-
-//   const deleteSkill = (id: string) =>
-//     setSkills((prev) => prev.filter((s) => s.id !== id));
-
-//   const openEdit = (skill: Skill) => {
-//     setEditingSkill(skill);
-//     setIsModalOpen(true);
-//   };
-//   const openAdd = () => {
-//     setEditingSkill(null);
-//     setIsModalOpen(true);
-//   };
-
-//   return {
-//     skills,
-//     isModalOpen,
-//     setIsModalOpen,
-//     editingSkill,
-//     onSave,
-//     deleteSkill,
-//     openEdit,
-//     openAdd,
-//   };
-// }
-
 "use client";
-import { useState, useEffect } from "react";
+import { useState } from "react";
+// import { useQuery, useMutation } from "@apollo/client/index.js";
 import { toast } from "sonner";
+import { GET_SKILLS, ADD_SKILL } from "../../lib/queries";
+import { useMutation, useQuery } from "@apollo/client/react";
 
-export function useSkills(initialSkills: any[]) {
-  const [skills, setSkills] = useState(initialSkills);
+export function useSkills() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingSkill, setEditingSkill] = useState(null);
 
-  const fetchSkills = async () => {
-    try {
-      const res = await fetch("/api/skills");
-      const data = await res.json();
-      if (data.skills) setSkills(data.skills);
-    } catch (err) {
-      console.error("Уншихад алдаа гарлаа:", err);
-    }
-  };
+  // const { data, loading, refetch } = useQuery(GET_SKILLS);
+  const { data, loading, refetch } = useQuery<{ skills: any[] }>(GET_SKILLS);
+  const skills = data?.skills || [];
 
-  useEffect(() => {
-    fetchSkills();
-  }, []);
+  const [addSkillMutation] = useMutation(ADD_SKILL, {
+    onCompleted: () => {
+      toast.success("Success");
+      setIsModalOpen(false);
+      refetch();
+    },
+    onError: (error: any) => {
+      console.error("GraphQL Error:", error);
+      toast.error(error.message || "Mutation error");
+    },
+  });
 
   const onSave = async (skillData: any) => {
-    console.log("Хүсэлт явуулж буй төрөл: POST");
-
     try {
-      const response = await fetch("/api/skills", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(skillData),
+      await addSkillMutation({
+        variables: {
+          name: skillData.name,
+          category: skillData.category,
+          level: skillData.level,
+        },
       });
-
-      if (response.status === 405) {
-        toast.error(
-          "API Method зөвшөөрөгдөөгүй байна (405). /api/skills/route.ts-ээ шалгана уу.",
-        );
-        return;
-      }
-
-      if (!response.ok) {
-        const errorText = await response.text();
-        throw new Error(errorText || "Алдаа гарлаа");
-      }
-
-      toast.success("Амжилттай хадгалагдлаа");
-
-      await fetchSkills();
-      setIsModalOpen(false);
-    } catch (err: any) {
-      console.error("DEBUG:", err);
-      toast.error(err.message || "Холболтын алдаа гарлаа");
+    } catch (e) {
+      console.error("Save error:", e);
     }
   };
+
   const openAdd = () => {
     setEditingSkill(null);
     setIsModalOpen(true);
@@ -121,11 +50,12 @@ export function useSkills(initialSkills: any[]) {
   };
 
   const deleteSkill = async (id: string) => {
-    setSkills(skills.filter((s) => s.id !== id));
+    console.log("Delete logic here for ID:", id);
   };
 
   return {
     skills,
+    loading,
     isModalOpen,
     setIsModalOpen,
     editingSkill,
