@@ -1,6 +1,9 @@
 {
-  "name": "my-app",
+  "name": "work-intern",
   "version": "0.1.0",
+  "engines": {
+    "node": "22.x"
+  },
   "private": true,
   "scripts": {
     "dev": "next dev",

@@ -1,4 +1,4 @@
-import { Skill } from "../types/skill";
+import { Skill } from "@/app/types/skill";
 
 export function SkillStats({ skills }: { skills: Skill[] }) {
   const avg =

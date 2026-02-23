@@ -16,12 +16,13 @@ import type { NextConfig } from "next";
 import { setupDevPlatform } from "@cloudflare/next-on-pages/next-dev";
 
 const nextConfig: NextConfig = {
+  output: "standalone",
   /* config options here */
 };
 
 export default (async () => {
   if (process.env.NODE_ENV === "development") {
-    await setupDevPlatform(); // Локал дээр D1-ийг ажиллуулах гүүр
+    await setupDevPlatform();
   }
   return nextConfig;
 })();

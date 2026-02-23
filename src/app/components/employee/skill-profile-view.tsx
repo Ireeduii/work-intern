@@ -6,7 +6,7 @@ import { SkillModal } from "./skill-modal";
 import { Button } from "@/components/ui/button";
 import { Plus, LayoutGrid } from "lucide-react";
 import type { Skill } from "../../types/skill";
-import { SkillStats } from "./skill-stats";
+import { SkillStats } from "../skills/skill-stats";
 import { SkillsTable } from "./skill-table";
 
 const initialSkills: Skill[] = [
