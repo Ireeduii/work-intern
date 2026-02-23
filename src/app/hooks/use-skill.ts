@@ -1,11 +1,12 @@
 "use client";
 import { useState } from "react";
-// import { useQuery, useMutation } from "@apollo/client/index.js";
 import { toast } from "sonner";
 import { GET_SKILLS, ADD_SKILL } from "../../lib/queries";
 import { useMutation, useQuery } from "@apollo/client/react";
+import { Skill } from "../types/skill";
 
-export function useSkills() {
+export function useSkills(initialSkills: Skill[] = []) {
+  const [_, setSkills] = useState<Skill[]>(initialSkills);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingSkill, setEditingSkill] = useState(null);
 
@@ -31,7 +32,7 @@ export function useSkills() {
         variables: {
           name: skillData.name,
           category: skillData.category,
-          level: skillData.level,
+          level: String(skillData.level),
         },
       });
     } catch (e) {
