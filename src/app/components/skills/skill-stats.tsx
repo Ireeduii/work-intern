@@ -24,9 +24,6 @@ export function SkillStats({ skills }: { skills: Skill[] }) {
           <p className="text-sm font-medium text-muted-foreground">
             {stat.label}
           </p>
-          {/* <p className="text-sm font-medium text-muted-foreground">
-            {stat.avg}
-          </p> */}
 
           <p className="mt-1 text-3xl font-semibold text-foreground">
             {stat.value}
