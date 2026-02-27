@@ -4,6 +4,7 @@ import {
   TrendingUp,
   AlertTriangle,
   ArrowRight,
+  icons,
 } from "lucide-react";
 import Link from "next/link";
 import {
@@ -26,10 +27,10 @@ const stats = [
     color: "text-primary",
   },
   {
-    label: "Team Members",
+    label: "Team members",
     value: employees.length,
     icon: Users,
-    color: "text-[hsl(160,60%,45%)]",
+    color: "text-[hsl(160,60%,45)]",
   },
   {
     label: "Avg Coverage",

@@ -12,11 +12,13 @@
     "deploy": "wrangler pages deploy .next"
   },
   "dependencies": {
-    "@apollo/client": "^4.1.4",
+    "@apollo/client": "^4.1.6",
+    "@apollo/server": "^5.4.0",
+    "@as-integrations/next": "^4.1.0",
     "@cloudflare/next-on-pages": "^1.13.16",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
-    "graphql": "^16.12.0",
+    "graphql": "^16.13.0",
     "graphql-yoga": "^5.18.0",
     "hono": "^4.11.9",
     "lucide-react": "^0.563.0",

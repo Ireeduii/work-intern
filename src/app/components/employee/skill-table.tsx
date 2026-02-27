@@ -19,14 +19,6 @@ interface SkillsTableProps {
   onDelete: (id: string) => void;
 }
 
-// export interface Skill {
-//   id: string
-//   name: string
-//   category: string
-//   level: number
-//   lastUpdated: string
-// }
-
 interface SkillsTableProps {
   skills: Skill[];
   onEdit: (skill: Skill) => void;

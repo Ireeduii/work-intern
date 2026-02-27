@@ -1,8 +1,7 @@
-name = "work-int"
-compatibility_date = "2026-02-11"
-pages_build_output_dir = ".next"
-
+name="work-internship"
+compatibility_date = "2026-02-27"
+pages_build_output_dir=".next"
 [[d1_databases]]
 binding = "DB" 
-database_name = "skill-map-db"
-database_id = "b145fb55-b648-43b1-addd-340641c8045c"
+database_name = "my-database"
+database_id = "8d69e0cf-83a9-4b8c-82e8-2b156eb9000b"

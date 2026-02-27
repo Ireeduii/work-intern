@@ -22,8 +22,10 @@ export function EmployeeHeader({
   joinDate,
   avatarUrl,
 }: EmployeeHeaderProps) {
-  const initials = name
+  const safeName = name || " ";
+  const initials = safeName
     .split(" ")
+    .filter(Boolean)
     .map((n) => n[0])
     .join("")
     .toUpperCase();
